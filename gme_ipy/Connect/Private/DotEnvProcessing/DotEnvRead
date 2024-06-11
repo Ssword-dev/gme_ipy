@@ -1,0 +1,33 @@
+from os import getenv
+from dotenv import load_dotenv, dotenv_values
+from copy import deepcopy
+from typing import TypeVar
+Response = TypeVar("Response")
+
+class DotenvData:
+    
+    def __init__(self, dotenvpath=None):
+        if dotenvpath is not None:
+            self.data = dotenv_values(dotenvpath)
+        if dotenvpath is None:
+
+            self.data = dotenv_values()
+        self.deleted = False
+    
+    def __call__(self, destruct=False) -> dict | Response:
+        Data = deepcopy(self.data)
+        if self.deleted:
+            raise ValueError("Data has already been deleted")
+
+        if destruct:
+            self.deleted = True
+            del self
+
+        return Data
+    
+
+if __name__ == "__main__":
+    dotenv_ = DotenvData()
+    print(dotenv_(destruct=True))
+    print(dotenv_(destruct=True))
+
